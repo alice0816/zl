@@ -1,0 +1,72 @@
+# # Realize the minimal application
+# import Tkinter as tk
+# 
+# class Application(tk.Frame):
+#     def __init__(self,master=None):
+#         tk.Frame.__init__(self, master)
+#         self.grid()
+#         self.creatWidgets()
+#         
+#     def creatWidgets(self):
+#         self.lblFirst = tk.Label(self,text='First')
+#         self.lblFirst.grid(row=0,sticky='E')
+#         self.lblSecond = tk.Label(self,text='Second')
+#         self.lblSecond.grid(row=1,sticky='E')
+#         self.entryFirst = tk.Entry(self,width=20)
+#         self.entryFirst.grid(row=0,column=1)
+#         self.entrySecond = tk.Entry(self,width=20)
+#         self.entrySecond.grid(row=1,column=1)
+#         
+# app = Application()
+# app.master.title('Application')
+# app.mainloop()
+
+
+# Realize the a different application
+import Tkinter as tk
+
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        tk.Frame.__init__(self, master)
+        self.grid()
+        self.createWidgetstwo()
+        
+    def createWidgets(self):
+        top = self.winfo_toplevel() 
+        top.rowconfigure(0, weight=1) 
+        top.columnconfigure(0, weight=1) 
+        self.rowconfigure(0, weight=1) 
+        self.columnconfigure(0, weight=1) 
+
+        
+        self.lblFirst = tk.Label(self, text='First')
+        self.lblSecond = tk.Label(self, text='Second')
+        self.entryFirst = tk.Entry(self, width=20)
+        self.entrySecond = tk.Entry(self, width=20)
+        self.checkButton = tk.Checkbutton(self, text='Preserve aspect', var=tk.IntVar())
+        self.photo = tk.PhotoImage(file='t2mobile.gif')
+        self.photolabel = tk.Label(self, image=self.photo, background="#F00")
+        self.zoomInButton = tk.Button(self, text='Zoom in')
+        self.zoomOutButton = tk.Button(self, text='Zoom out')            
+        self.lblFirst.grid(row=0, sticky='N')
+        self.entryFirst.grid(row=0, column=1)   
+        self.lblSecond.grid(row=1, sticky='N')
+        self.entrySecond.grid(row=1, column=1)
+        self.photolabel.grid(row=0, column=2, rowspan=2, columnspan=2)
+        self.checkButton.grid(row=2, column=0, columnspan=2, sticky='W')
+        self.zoomInButton.grid(row=2, column=2)
+        self.zoomOutButton.grid(row=2, column=3)
+        
+    def createWidgetstwo(self):
+        top = self.winfo_toplevel() 
+        top.rowconfigure(0, weight=1) 
+        top.columnconfigure(0, weight=1) 
+        self.rowconfigure(0, weight=1) 
+        self.columnconfigure(0, weight=1) 
+        self.quit = tk.Button(self, text='Quit', command=self.quit)
+        self.quit.grid()
+        self.quit.flash()        
+        
+app = Application()
+app.master.title('Application')
+app.mainloop()
