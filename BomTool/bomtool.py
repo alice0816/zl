@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import csv
 import os
 import re
 import sys
+import StringIO
 
 TABEL = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
                 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -23,13 +26,8 @@ def getNeedColumnNo(columnNames, totalColumn):
         raise Exception('More than one column name of : %s.' % needColumnName)
     return needColumnNolist
 
-def saveNeedColumnValues(columnNames, totalColumn, tempFile1) :
-    try:
-        csvfile = file(tempFile1,  'wb')
-    except:
-        pass
-    writer = csv.writer(csvfile)
-    writer.writerow(['Reference', 'Part', 'PCB Footprint'])
+def saveNeedColumnValues() :
+    s1 = StringIO.StringIO()
     needColumnNo = getNeedColumnNo(columnNames, totalColumn)
     for eachline in lines[2:] :
         needColumnValues = []
@@ -38,28 +36,25 @@ def saveNeedColumnValues(columnNames, totalColumn, tempFile1) :
             raise Exception('Less then %s columns in this row:.' % str(totalColumn))
         for columnNo in needColumnNo:
             needColumnValues.append(thisColumnValues[columnNo])
-        data = [(needColumnValues[0].replace('"', '').strip()), (needColumnValues[1].replace('"', '').strip()), 
-                (needColumnValues[2].replace('"', '').strip())]
-        writer.writerow(data)
-    try:
-        csvfile.close()
-    except:
-        pass   
+        data = (needColumnValues[0].replace('"', '').strip()) +'&&'  + (needColumnValues[1].replace('"', '').strip()) +'&&'  + (needColumnValues[2].replace('"', '').strip())
+        s1.write(data)
+        s1.write('\n')
+    return s1.getvalue()
+
+def mergeRows():
+    s2 = StringIO.StringIO()
+    needValues = saveNeedColumnValues()
+    _rows =  needValues.split('\n')[:-1]
     
-def mergeRows(tempFile1, tempFile2):
-    try:
-        mergeCsvfile = file(tempFile2, 'wb') 
-        csvfile = file(tempFile1, 'r+') 
-    except:
-        pass
-    writer = csv.writer(mergeCsvfile)
-    writer.writerow(['Quantity', 'Reference', 'Part', 'PCB Footprint'])
+    rows = []
     
-    reader = csv.reader(csvfile)
-    rows =  [row for row in reader][1:]
-    
+    for r in _rows:
+        tempRow = r.split('&&' )
+        rows.append(tempRow)
+        
     '''Delete test poist and delete NC  value '''
     rowsLen = len(rows)
+    print rowsLen
     for i in range(rowsLen):
         if len(rows[(rowsLen-i-1 )][0]) < 2:
             raise Exception('Reference value:"%s" is unvalid, in the %s row.' % ((rows[(rowsLen-i-1 )][0]), str(i+2)))
@@ -83,7 +78,7 @@ def mergeRows(tempFile1, tempFile2):
         row = rows[0]
         referenceValue = row[0]
         for thisrow in rows:
-            if (thisrow[1] == row[1] and thisrow[2] == row[2]):
+            if (thisrow[1].upper() == row[1].upper() and thisrow[2].upper() == row[2].upper()):
                 needDeleteRows.append(i)
                 countQuantity += 1
                 if countQuantity > 1:
@@ -91,34 +86,37 @@ def mergeRows(tempFile1, tempFile2):
             i += 1
             
         item += 1
-        writer.writerow([(countQuantity), (referenceValue), (row[1]), (row[2])])
-        
+        data = str(countQuantity) + '&&' + (referenceValue)+'&&' +(row[1]) +'&&' + (row[2])
+        s2.write(data)
+        s2.write('\n')
         _leng = len(needDeleteRows)
         for i in range(_leng):
-            del rows[needDeleteRows[(_leng-i-1 )]]      
-    try:
-        mergeCsvfile.close()
-        csvfile.close()
-    except:
-        pass   
-    
-def sortAndOrderComponents(outputFile, tempFile2):
+            del rows[needDeleteRows[(_leng-i-1 )]]     
+    return s2.getvalue() 
+
+def sortAndOrderComponents():
     try:
         sortfile = file(outputFile, 'wb')  # output file
-        csvfile = file(tempFile2, 'r+')
     except:
         pass
     writer = csv.writer(sortfile)
-    writer.writerow(['Quantity', 'Reference', 'Part', 'PCB Footprint'])
+    writer.writerow(['Item', 'Quantity', 'Reference', 'Part', 'PCB Footprint'])
 
-    reader = csv.reader(csvfile)
-    rows =  [row for row in reader][1:]
-    
+    mergeValues = mergeRows().split('\n')[:-1]
+    rows = []
+    for r in mergeValues:
+        tempRow = r.split('&&' )
+        rows.append(tempRow)
+
     '''  first sort '''
     uFirstResult = []
     cFirstResult = [] # C
     rFirstResult = [] # R
     dFirstResult = [] # D
+    qFirstResult = [] # Q
+    lFirstResult = [] # L
+    yFirstResult = [] # Y
+    jFirstResult = [] # J
     otherFirstResult = [] #other
 
     for row in rows:
@@ -130,6 +128,14 @@ def sortAndOrderComponents(outputFile, tempFile2):
             rFirstResult.append(row)
         elif row[1].upper().startswith('D') and (not row[1][1].upper() in TABEL):
             dFirstResult.append(row)
+        elif row[1].upper().startswith('Q') and (not row[1][1].upper() in TABEL):
+            qFirstResult.append(row)
+        elif row[1].upper().startswith('L') and (not row[1][1].upper() in TABEL):
+            lFirstResult.append(row)
+        elif row[1].upper().startswith('Y') and (not row[1][1].upper() in TABEL):
+            yFirstResult.append(row)
+        elif row[1].upper().startswith('J') and (not row[1][1].upper() in TABEL):
+            jFirstResult.append(row)
         else:
             otherFirstResult.append(row)
             
@@ -228,23 +234,71 @@ def sortAndOrderComponents(outputFile, tempFile2):
             d = ord(b)
             if c > d:
                 otherFirstResult[j], otherFirstResult[j + 1] = otherFirstResult[j + 1], otherFirstResult[j]
-                               
-    allResult = uFirstResult
+    i = 0 
+    writer.writerow(['IC'])       
+    for result in uFirstResult:
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+        
+    i = 0
+    writer.writerow(['Capacitor'])
     for result in cFirstResult:
-        allResult.append(result)
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+        
+    i = 0
+    writer.writerow(['Resister'])  
     for result in rFirstResult:
-        allResult.append(result)
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+    
+    i = 0
+    writer.writerow(['Diode'])      
     for result in dFirstResult:
-        allResult.append(result)
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+        
+    i = 0
+    writer.writerow(['Transistor'])    
+    for result in qFirstResult:
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+        
+    i = 0
+    writer.writerow(['Inductance'])    
+    for result in lFirstResult:
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+        
+    i = 0
+    writer.writerow(['Crystal'])    
+    for result in yFirstResult:
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+        
+    i = 0
+    writer.writerow(['Terminal'])    
+    for result in jFirstResult:
+        i += 1
+        result.insert(0, i)
+        writer.writerow(result)
+    
+    i = 0
+    writer.writerow(['Others'])    
     for result in otherFirstResult:
-        allResult.append(result)
-
-    for result in allResult:
+        i += 1
+        result.insert(0, i)
         writer.writerow(result)
 
     try:
         sortfile.close()
-        csvfile.close()
     except:
         pass   
 
@@ -270,10 +324,6 @@ if __name__ == "__main__" :
                 outputFile = os.path.join(sys.argv[2], 'outputfile.csv' )
             else:
                 raise Exception, 'The third argv is invalid.'
-        print 'Output File : ' + outputFile
-        tempFile1 = os.path.join(os.path.dirname(outputFile), 'temp.csv')
-        tempFile2 = os.path.join(os.path.dirname(outputFile), 'temp2.csv')
-                                    
     else:
         print 'Usage: bomtool .py <input file>  [output file]'   +  '\n'
 
@@ -285,7 +335,6 @@ if __name__ == "__main__" :
     columnline = lines[1]
     columnNames = columnline.split('\t')
     totalColumn = len(columnNames)
-    saveNeedColumnValues(columnNames, totalColumn, tempFile1)    
-    mergeRows(tempFile1, tempFile2)  
-    sortAndOrderComponents(outputFile, tempFile2)
+    sortAndOrderComponents()
+    print 'Output File : ' + outputFile
 
