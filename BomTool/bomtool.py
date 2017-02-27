@@ -8,7 +8,7 @@ import StringIO
 
 TABEL = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
                 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-NEED_COLUMNS = ['Part Reference', 'Value', 'PCB Footprint']
+NEED_COLUMNS = ['part reference', 'value', 'pcb footprint']
 
 def getNeedColumnNo(columnNames, totalColumn):
     needColumnNolist = []
@@ -16,7 +16,7 @@ def getNeedColumnNo(columnNames, totalColumn):
     for needColumnName in NEED_COLUMNS:
         j = 0
         for i in range(totalColumn):
-            if needColumnName == columnNames[i].replace('"', ''):
+            if needColumnName == columnNames[i].strip().replace('"', '').replace('\n', '').replace('\r', '').lower():
                 if j == 0:
                     needColumnNolist.append(i)
                 j += 1
@@ -36,7 +36,7 @@ def saveNeedColumnValues() :
             raise Exception('Less then %s columns in this row:.' % str(totalColumn))
         for columnNo in needColumnNo:
             needColumnValues.append(thisColumnValues[columnNo])
-        data = (needColumnValues[0].replace('"', '').strip()) +'&&'  + (needColumnValues[1].replace('"', '').strip()) +'&&'  + (needColumnValues[2].replace('"', '').strip())
+        data = (needColumnValues[0].replace('"', '').strip().replace('\n', '').replace('\r', '')) +'&&'  + (needColumnValues[1].replace('"', '').strip().replace('\n', '').replace('\r', '')) +'&&'  + (needColumnValues[2].replace('"', '').strip().replace('\n', '').replace('\r', ''))
         s1.write(data)
         s1.write('\n')
     return s1.getvalue()
@@ -54,7 +54,6 @@ def mergeRows():
         
     '''Delete test poist and delete NC  value '''
     rowsLen = len(rows)
-    print rowsLen
     for i in range(rowsLen):
         if len(rows[(rowsLen-i-1 )][0]) < 2:
             raise Exception('Reference value:"%s" is unvalid, in the %s row.' % ((rows[(rowsLen-i-1 )][0]), str(i+2)))
@@ -235,63 +234,72 @@ def sortAndOrderComponents():
             if c > d:
                 otherFirstResult[j], otherFirstResult[j + 1] = otherFirstResult[j + 1], otherFirstResult[j]
     i = 0 
-    writer.writerow(['IC'])       
+    if len(uFirstResult):
+        writer.writerow(['IC'])       
     for result in uFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
         
     i = 0
-    writer.writerow(['Capacitor'])
+    if len(cFirstResult):
+        writer.writerow(['Capacitor'])
     for result in cFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
         
     i = 0
-    writer.writerow(['Resister'])  
+    if len(rFirstResult):
+        writer.writerow(['Resister'])  
     for result in rFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
     
     i = 0
-    writer.writerow(['Diode'])      
+    if len(dFirstResult):
+        writer.writerow(['Diode'])      
     for result in dFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
         
     i = 0
-    writer.writerow(['Transistor'])    
+    if len(qFirstResult):
+        writer.writerow(['Transistor'])    
     for result in qFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
         
     i = 0
-    writer.writerow(['Inductance'])    
+    if len(lFirstResult):
+        writer.writerow(['Inductance'])    
     for result in lFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
         
     i = 0
-    writer.writerow(['Crystal'])    
+    if len(yFirstResult):
+        writer.writerow(['Crystal'])    
     for result in yFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
         
     i = 0
-    writer.writerow(['Terminal'])    
+    if len(jFirstResult):
+        writer.writerow(['Terminal'])    
     for result in jFirstResult:
         i += 1
         result.insert(0, i)
         writer.writerow(result)
     
     i = 0
-    writer.writerow(['Others'])    
+    if len(otherFirstResult):
+        writer.writerow(['Others'])   
     for result in otherFirstResult:
         i += 1
         result.insert(0, i)
@@ -313,7 +321,6 @@ if __name__ == "__main__" :
         print 'Input File : '  + inputFile
 
         if length ==2:
-            print os.path.dirname(sys.argv[1])
             outputFile = os.path.join(os.path.dirname(sys.argv[1]), 'outputfile.csv' )
 
         elif length == 3:
