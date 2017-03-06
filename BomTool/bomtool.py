@@ -144,14 +144,26 @@ def sortAndOrderComponents():
                 a = cFirstResult[j][2].upper()
                 b = cFirstResult[j+1][2].upper()
                 if  'PF'  in a:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*PF.*',a, re.M|re.I)
-                    a = float(matchResult.group(1))
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*PF.*',a, re.M|re.I)
+                        a = float(matchResult.group(1))
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % a) 
+                    
                 elif 'NF'  in a:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*NF.*',a, re.M|re.I)
-                    a = float(matchResult.group(1))*1000
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*NF.*',a, re.M|re.I)
+                        a = float(matchResult.group(1))*1000
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % a) 
+                    
                 elif 'UF'  in a:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*UF.*',a, re.M|re.I)
-                    a = float(matchResult.group(1))*1000000
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*UF.*',a, re.M|re.I)
+                        a = float(matchResult.group(1))*1000000
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % a) 
+                    
                 elif re.match(r'^[0-9]+$',a) and (len(a)==3):
                     a = int(a[:2])*10**int(a[2])
                     a = float(a)
@@ -159,14 +171,26 @@ def sortAndOrderComponents():
                     raise Exception('Part  vaule:%s is wrong'  % a)
                 
                 if  'PF'  in b:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*PF.*',b, re.M|re.I)
-                    b = float(matchResult.group(1))
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*PF.*',b, re.M|re.I)
+                        b = float(matchResult.group(1))
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % b) 
+                    
                 elif 'NF'  in b:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*NF.*',b, re.M|re.I)
-                    b = float(matchResult.group(1))*1000
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*NF.*',b, re.M|re.I)
+                        b = float(matchResult.group(1))*1000
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % b) 
+                    
                 elif 'UF'  in b:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*UF.*',b, re.M|re.I)
-                    b = float(matchResult.group(1))*1000000
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*UF.*',b, re.M|re.I)
+                        b = float(matchResult.group(1))*1000000
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % b) 
+                    
                 elif re.match(r'^[0-9]+$',b) and (len(b)==3):
                     b = int(b[:2])*10**int(b[2])
                     b = float(b)
@@ -184,40 +208,71 @@ def sortAndOrderComponents():
                 if  a =='0':
                     a = float(a)
                 elif 'M' in a:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*M.*',a, re.M|re.I)
-                    a = float(matchResult.group(1))*10**6
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*M.*',a, re.M|re.I)
+                        a = float(matchResult.group(1))*10**6
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % a) 
+                    
                 elif 'K'  in a:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*K.*',a, re.M|re.I)
-                    a = float(matchResult.group(1))*1000
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*K.*',a, re.M|re.I)
+                        a = float(matchResult.group(1))*1000
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % a) 
+                    
                 elif 'R'  in a:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*R.*',a, re.M|re.I)
-                    a = float(matchResult.group(1))
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*R.*',a, re.M|re.I)
+                        a = float(matchResult.group(1))
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % a) 
+                    
                 elif re.match(r'^[0-9]+$',a) and (len(a)==3):
                     a = int(a[:2])*10**int(a[2])
                     a = float(a)
                 elif '%'  in a:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*%.*',a, re.M|re.I)
-                    a = float(matchResult.group(1))
+                    try: 
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*%.*',a, re.M|re.I)
+                        a = float(matchResult.group(1))
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % a) 
                 else:
                     raise Exception('Part  vaule:%s is wrong'  % a)
                  
                 if  b =='0':
                     b = float(b)
                 elif 'M' in b:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*M.*',b, re.M|re.I)
-                    b = float(matchResult.group(1))*10**6
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*M.*',b, re.M|re.I)
+                        b = float(matchResult.group(1))*10**6
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % b) 
+                    
                 elif 'K'  in b:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*K.*',b, re.M|re.I)
-                    b = float(matchResult.group(1))*1000
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*K.*',b, re.M|re.I)
+                        b = float(matchResult.group(1))*1000
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % b) 
+                    
                 elif 'R'  in b:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*R.*',b, re.M|re.I)
-                    b = float(matchResult.group(1))
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*R.*',b, re.M|re.I)
+                        b = float(matchResult.group(1))
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % b) 
+                    
                 elif re.match(r'^[0-9]+$',b) and (len(b)==3):
                     b = int(b[:2])*10**int(b[2])
                     b = float(b)
                 elif '%'  in b:
-                    matchResult = re.match(r'(\d+\.?[0-9]*).*%.*',b, re.M|re.I)
-                    b = float(matchResult.group(1))
+                    try:
+                        matchResult = re.match(r'(\d+\.?[0-9]*).*%.*',b, re.M|re.I)
+                        b = float(matchResult.group(1))
+                    except:
+                        raise Exception('Part  vaule:%s is wrong'  % b) 
+                    
                 else:
                     raise Exception('Part  vaule:%s is wrong'  % b)
  
