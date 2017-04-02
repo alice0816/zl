@@ -99,7 +99,26 @@ def sortAndOrderComponents():
     except:
         pass
     writer = csv.writer(sortfile)
-    writer.writerow(['Item', 'Quantity', 'Reference', 'Part', 'PCB Footprint'])
+    Item = '类型'
+    c_unicode = Item.decode( "utf -8")
+    Item = c_unicode.encode( "gbk ")
+    
+    Quantity = '数量'
+    c_unicode = Quantity.decode( "utf -8")
+    Quantity = c_unicode.encode( "gbk ")
+
+    Reference = '元件位号'
+    c_unicode = Reference.decode( "utf -8")
+    Reference = c_unicode.encode( "gbk ")
+    
+    Part = '规格型号'
+    c_unicode = Part.decode( "utf -8")
+    Part = c_unicode.encode( "gbk ")
+    
+    PCB_Footprint = '元件封装'
+    c_unicode = PCB_Footprint.decode( "utf -8")
+    PCB_Footprint = c_unicode.encode( "gbk ")
+    writer.writerow([Item, Quantity, Reference, Part, PCB_Footprint])
 
     mergeValues = mergeRows().split('\n')[:-1]
     rows = []
@@ -293,7 +312,7 @@ def sortAndOrderComponents():
         content = '芯片'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(IC)'])       
+        writer.writerow([c_gbk])       
     for result in uFirstResult:
         i += 1
         result.insert(0, i)
@@ -304,7 +323,7 @@ def sortAndOrderComponents():
         content = '电容'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(Capacitor)'])
+        writer.writerow([c_gbk])
     for result in cFirstResult:
         i += 1
         result.insert(0, i)
@@ -315,7 +334,7 @@ def sortAndOrderComponents():
         content = '电阻'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(Resister)'])  
+        writer.writerow([c_gbk])  
     for result in rFirstResult:
         i += 1
         result.insert(0, i)
@@ -326,7 +345,7 @@ def sortAndOrderComponents():
         content = '二极管'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(Diode)'])      
+        writer.writerow([c_gbk])      
     for result in dFirstResult:
         i += 1
         result.insert(0, i)
@@ -337,7 +356,7 @@ def sortAndOrderComponents():
         content = '晶体管'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk +'(Transistor)'])    
+        writer.writerow([c_gbk])    
     for result in qFirstResult:
         i += 1
         result.insert(0, i)
@@ -348,7 +367,7 @@ def sortAndOrderComponents():
         content = '电感'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(Inductance)'])    
+        writer.writerow([c_gbk])    
     for result in lFirstResult:
         i += 1
         result.insert(0, i)
@@ -359,7 +378,7 @@ def sortAndOrderComponents():
         content = '晶振'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(Crystal)'])    
+        writer.writerow([c_gbk])    
     for result in yFirstResult:
         i += 1
         result.insert(0, i)
@@ -370,7 +389,7 @@ def sortAndOrderComponents():
         content = '接插件'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(Terminal)'])    
+        writer.writerow([c_gbk])    
     for result in jFirstResult:
         i += 1
         result.insert(0, i)
@@ -381,7 +400,7 @@ def sortAndOrderComponents():
         content = '其他'
         c_unicode = content.decode( "utf -8")
         c_gbk = c_unicode.encode( "gbk ")
-        writer.writerow([c_gbk + '(Others)'])
+        writer.writerow([c_gbk])
     for result in otherFirstResult:
         i += 1
         result.insert(0, i)
