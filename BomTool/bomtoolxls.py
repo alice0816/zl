@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import urllib
 import xlwt
 import sys
 import StringIO
@@ -289,8 +290,70 @@ def sortAndOrderComponents():
             d = ord(b)
             if c > d:
                 otherFirstResult[j], otherFirstResult[j + 1] = otherFirstResult[j + 1], otherFirstResult[j]
+                
+    ''' get compent price'''
+    def get_price(compent_url):
+        page = urllib.urlopen(compent_url)
+        html = page.read()
+        lines = html.split('\n')
+        for one_line in lines:
+            if 'g_page_config'   in one_line:
+                need_line = one_line
+        pattern =re.compile('"view_price":"(\d+\.?[0-9]*)","view_fee":"(\d+\.?[0-9]*)')
+        price_and_fee = pattern.findall(need_line)
+        return price_and_fee
     
-    '''set the cell style'''
+    def add_price(Result, footprint=False):
+        uu = []
+        for u in Result:
+            if footprint:
+                url = "https://s.taobao.com/search?q="  + '电阻 '  + u[2]
+                prices = get_price(url)
+                url = "https://s.taobao.com/search?q="  + u'电阻 ' + u[2]
+            else:
+                url = "https://s.taobao.com/search?q=" + u[2]
+                prices = get_price(url)
+            
+            _len = len(prices)
+            if  _len == None:
+                u.append(0)
+                u.append(0)
+                u.append(0)
+            elif _len == 1:
+                u.append(prices[0][0])
+                u.append(0)
+                u.append(0)
+            elif _len == 2:
+                u.append(float(prices[0][0]))
+                u.append(float(prices[1][0]))
+                u.append(0)
+            else:
+                u.append(float(prices[0][0]))
+                u.append(float(prices[1][0]))
+                u.append(float(prices[2][0]))
+            u.append(url)
+            uu.append(u)
+        return uu
+    
+    if len(uFirstResult):
+        uFirstResult = add_price(uFirstResult)
+    if len(cFirstResult):
+        cFirstResult = add_price(cFirstResult)
+    if len(rFirstResult):
+        rFirstResult = add_price(rFirstResult, footprint=True)
+    if len(dFirstResult):
+        dFirstResult = add_price(dFirstResult)
+    if len(qFirstResult):
+        qFirstResult = add_price(qFirstResult)
+    if len(lFirstResult):
+        lFirstResult = add_price(lFirstResult)
+    if len(yFirstResult):
+        yFirstResult = add_price(yFirstResult)
+    if len(jFirstResult):
+        jFirstResult = add_price(jFirstResult)
+    if len(otherFirstResult):
+        otherFirstResult = add_price(otherFirstResult)
+                     
     def set_style(borders=True, bold=False, alignment=False):
         style = xlwt.XFStyle()
         if borders:
@@ -313,7 +376,7 @@ def sortAndOrderComponents():
     '''write date to xls file'''
     f = xlwt.Workbook()
     bom1 = f.add_sheet('bom 1', cell_overwrite_ok=True)
-    row0 = [u'序号', u'数量', u'元件位号', u'规格型号', u'元件封装']
+    row0 = [u'序号', u'数量', u'元件位号', u'规格型号', u'元件封装', u'价格1', u'价格2', u'价格3', u'链接']
     for i in range(0,len(row0)): 
         alignment_status = False
         if i < 2:
