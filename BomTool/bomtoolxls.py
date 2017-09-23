@@ -524,19 +524,15 @@ def sortAndOrderComponents():
 
 if __name__ == "__main__" :
     length = len(sys.argv) 
-    if length < 2 or length > 4:
+    if length < 3 or length > 4:
         raise Exception, 'The length of argvs is improper.'
     
     elif os.path.isfile(sys.argv[1]):
 
         inputFile = sys.argv[1]
         print 'Input File : '  + inputFile
-
-        if length ==2:
-            outputFile = os.path.join(os.path.dirname(sys.argv[1]), 'outputfile.xls' )
-            purchase_num = 1
             
-        elif length == 3:
+        if length == 3:
             outputFile = os.path.join(os.path.dirname(sys.argv[1]), 'outputfile.xls' )
             purchase_num = int(sys.argv[2])
 
