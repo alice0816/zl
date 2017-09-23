@@ -303,6 +303,14 @@ def sortAndOrderComponents():
         price_and_fee = pattern.findall(need_line)
         return price_and_fee
     
+    def add_purchase_num(Result):
+        nn = []
+        for n in Result:
+            need_purchase = (int(n[0])*purchase_num)
+            n.append(need_purchase)
+            nn.append(n)
+        return nn
+    
     def add_price(Result, footprint=False):
         uu = []
         for u in Result:
@@ -335,23 +343,33 @@ def sortAndOrderComponents():
             uu.append(u)
         return uu
     
+    ''' add purchase num and price'''
     if len(uFirstResult):
+        uFirstResult = add_purchase_num(uFirstResult)
         uFirstResult = add_price(uFirstResult)
     if len(cFirstResult):
+        cFirstResult = add_purchase_num(cFirstResult)
         cFirstResult = add_price(cFirstResult)
     if len(rFirstResult):
+        rFirstResult = add_purchase_num(rFirstResult)
         rFirstResult = add_price(rFirstResult, footprint=True)
     if len(dFirstResult):
+        dFirstResult = add_purchase_num(dFirstResult)
         dFirstResult = add_price(dFirstResult)
     if len(qFirstResult):
+        qFirstResult = add_purchase_num(qFirstResult)
         qFirstResult = add_price(qFirstResult)
     if len(lFirstResult):
+        lFirstResult = add_purchase_num(lFirstResult)
         lFirstResult = add_price(lFirstResult)
     if len(yFirstResult):
+        yFirstResult = add_purchase_num(yFirstResult)
         yFirstResult = add_price(yFirstResult)
     if len(jFirstResult):
+        jFirstResult = add_purchase_num(jFirstResult)
         jFirstResult = add_price(jFirstResult)
     if len(otherFirstResult):
+        otherFirstResult = add_purchase_num(otherFirstResult)
         otherFirstResult = add_price(otherFirstResult)
                      
     def set_style(borders=True, bold=False, alignment=False):
@@ -376,7 +394,7 @@ def sortAndOrderComponents():
     '''write date to xls file'''
     f = xlwt.Workbook()
     bom1 = f.add_sheet('bom 1', cell_overwrite_ok=True)
-    row0 = [u'序号', u'数量', u'元件位号', u'规格型号', u'元件封装', u'价格1', u'价格2', u'价格3', u'链接']
+    row0 = [u'序号', u'数量', u'元件位号', u'规格型号', u'元件封装', u'采购数',  u'价格1', u'价格2', u'价格3', u'链接']
     for i in range(0,len(row0)): 
         alignment_status = False
         if i < 2:
@@ -506,7 +524,7 @@ def sortAndOrderComponents():
 
 if __name__ == "__main__" :
     length = len(sys.argv) 
-    if length < 2 or length > 3:
+    if length < 2 or length > 4:
         raise Exception, 'The length of argvs is improper.'
     
     elif os.path.isfile(sys.argv[1]):
@@ -516,17 +534,24 @@ if __name__ == "__main__" :
 
         if length ==2:
             outputFile = os.path.join(os.path.dirname(sys.argv[1]), 'outputfile.xls' )
-
-        elif length == 3:
-            if os.path.isfile(sys.argv[2]):
-                outputFile = sys.argv[2]
+            purchase_num = 1
             
-            elif os.path.isdir(sys.argv[2]):
-                outputFile = os.path.join(sys.argv[2], 'outputfile.xls' )
+        elif length == 3:
+            outputFile = os.path.join(os.path.dirname(sys.argv[1]), 'outputfile.xls' )
+            purchase_num = int(sys.argv[2])
+
+        elif length == 4:
+            purchase_num = int(sys.argv[2])
+            
+            if os.path.isfile(sys.argv[3]):
+                outputFile = sys.argv[3]
+            
+            elif os.path.isdir(sys.argv[3]):
+                outputFile = os.path.join(sys.argv[3], 'outputfile.xls' )
             else:
                 raise Exception, 'The third argv is invalid.'
     else:
-        print 'Usage: bomtool .py <input file>  [output file]'   +  '\n'
+        print 'Usage: bomtool .py <input file>  [output file]  [purchase num]'    +  '\n'
 
     try:
         f = open(inputFile, 'r') # input file
@@ -538,4 +563,3 @@ if __name__ == "__main__" :
     totalColumn = len(columnNames)
     sortAndOrderComponents()
     print 'Output File : ' + outputFile
-
